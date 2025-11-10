@@ -133,3 +133,18 @@ container.addEventListener('touchend',endDrag);
 container.addEventListener('touchcancel',endDrag);
 
 generateCube();
+// Add highlighting on rotateLayer
+const originalRotateLayer = window.rotateLayer;
+window.rotateLayer = function(axis,index,direction){
+  if(rotatingLayer) return;
+  // Highlight affected cubies
+  const cubies=[];
+  for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
+    if((axis==='x'&&x===index)||(axis==='y'&&y===index)||(axis==='z'&&z===index)) cubies.push(cubeState[x][y][z]);
+  }}}
+  cubies.forEach(c=>c.classList.add('highlight'));
+  // Call original function
+  originalRotateLayer(axis,index,direction);
+  // Remove highlight after animation
+  setTimeout(()=>cubies.forEach(c=>c.classList.remove('highlight')), 400);
+};
