@@ -5,7 +5,6 @@ let isDragging=false, startX, startY;
 let rotatingLayer=false;
 let cubeState=[];
 
-// Create cubie with dynamic lighting
 function createCubie(x,y,z){
   const cubie=document.createElement('div'); cubie.classList.add('cubie');
   cubie.style.transform=`translateX(${x}px) translateY(${y}px) translateZ(${z}px)`;
@@ -17,7 +16,6 @@ function createCubie(x,y,z){
   return cubie;
 }
 
-// Generate cube
 function generateCube(){
   const offset=((CUBE_SIZE-1)*(CUBIE_SIZE+GAP))/2;
   cubeState=[];
@@ -33,13 +31,11 @@ function generateCube(){
   updateCubeRotation();
 }
 
-// Apply rotation to whole cube
 function updateCubeRotation(){ 
   container.style.transform=`rotateX(${cubeRotationX}deg) rotateY(${cubeRotationY}deg)`; 
   applyLighting();
 }
 
-// Dynamic lighting
 function applyLighting(){
   const lightX=Math.sin(cubeRotationY*Math.PI/180);
   const lightY=Math.sin(cubeRotationX*Math.PI/180);
@@ -57,7 +53,6 @@ function applyLighting(){
   });
 }
 
-// Rotate a layer (global for buttons)
 window.rotateLayer=function(axis,index,direction){
   if(rotatingLayer) return;
   rotatingLayer=true;
@@ -71,7 +66,6 @@ window.rotateLayer=function(axis,index,direction){
     if(axis==='x') rotateStr=` rotateX(${direction*90}deg)`;
     if(axis==='y') rotateStr=` rotateY(${direction*90}deg)`;
     if(axis==='z') rotateStr=` rotateZ(${direction*90}deg)`;
-    // Stagger animations slightly
     cubie.style.transition=`transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) ${i*0.02}s`; 
     cubie.style.transform=current+rotateStr;
   });
@@ -82,7 +76,6 @@ window.rotateLayer=function(axis,index,direction){
   },400);
 }
 
-// Update cubeState array
 function updateCubeState(axis,index,direction){
   const newState=JSON.parse(JSON.stringify(cubeState));
   for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
@@ -91,6 +84,15 @@ function updateCubeState(axis,index,direction){
     if(axis==='z'&&z===index){ const nx=direction===1?y:2-y, ny=direction===1?2-x:x, nz=z; newState[nx][ny][nz]=cubeState[x][y][z]; }
   }}}
   cubeState=newState;
+}
+
+// Quick cube rotation presets
+window.presetRotate=function(axis,degrees){
+  if(rotatingLayer) return;
+  if(axis==='x') cubeRotationX+=degrees;
+  if(axis==='y') cubeRotationY+=degrees;
+  if(axis==='z') container.style.transform+=` rotateZ(${degrees}deg)`; // visual only
+  updateCubeRotation();
 }
 
 // Dragging
@@ -121,7 +123,6 @@ function endDrag(){
   container.style.cursor='grab';
 }
 
-// Event listeners
 container.addEventListener('mousedown',startDrag);
 container.addEventListener('mousemove',drag);
 container.addEventListener('mouseup',endDrag);
