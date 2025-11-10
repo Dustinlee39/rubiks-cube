@@ -185,3 +185,41 @@ container.addEventListener('touchend', e=>{
   rotateLayer(axis,index,direction);
   touchCubie = null;
 });
+// Enhanced layer swipe with inertia
+let touchStartTime;
+container.addEventListener('touchstart', e=>{
+  if(rotatingLayer) return;
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  touchStartTime = performance.now();
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  touchCubie = el.closest('.cubie');
+});
+
+container.addEventListener('touchend', e=>{
+  if(rotatingLayer || !touchCubie) return;
+  const touch = e.changedTouches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+  const dt = performance.now() - touchStartTime;
+  const velocityX = dx/dt;
+  const velocityY = dy/dt;
+  const absX = Math.abs(dx), absY = Math.abs(dy);
+  if(absX < 20 && absY < 20) return;
+
+  let axis, index, direction;
+  // Faster swipes rotate more dynamically
+  const speedFactor = Math.min(Math.max(Math.sqrt(velocityX**2+velocityY**2)*50,1),2);
+  if(absX > absY){
+    axis = 'y';
+    index = Math.round((touchCubie.style.transform.match(/translateY\(([-\d.]+)px\)/)[1] - (-90))/92);
+    direction = dx>0 ? 1*speedFactor : -1*speedFactor;
+  } else {
+    axis = 'x';
+    index = Math.round((touchCubie.style.transform.match(/translateX\(([-\d.]+)px\)/)[1] - (-90))/92);
+    direction = dy>0 ? 1*speedFactor : -1*speedFactor;
+  }
+  rotateLayer(axis,index,Math.round(direction));
+  touchCubie = null;
+});
