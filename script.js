@@ -352,3 +352,11 @@ window.debugCubeState=function(){
 };
 
 console.log("Full system debug hooks installed");
+// Force overlays to re-render visibly in 3D space
+function ensureDebugOverlayVisibility() {
+  document.querySelectorAll('.cubie-debug').forEach(o => {
+    o.style.display = 'block';
+    o.style.transform = 'translateZ(50px)';
+  });
+}
+setInterval(ensureDebugOverlayVisibility, 200);

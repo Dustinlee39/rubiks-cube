@@ -64,3 +64,20 @@ button:hover { background:#555; }
   z-index: 1000;
   transition: opacity 0.2s ease-in-out;
 }
+
+.cubie-debug {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 11px;
+  color: #0ff;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px;
+  border-radius: 3px;
+  pointer-events: none;
+  transform: translateZ(50px);
+  text-align: center;
+  white-space: nowrap;
+  font-family: monospace;
+}
