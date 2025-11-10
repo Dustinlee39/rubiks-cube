@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Rubik's Cube</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Rubik's Cube</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="cube-container"></div>
-  <script src="script.js"></script>
+  <div id="controls">
+    <button onclick="rotateLayer('x',0,1)">Rotate X0+</button>
+    <button onclick="rotateLayer('x',1,1)">Rotate X1+</button>
+    <button onclick="rotateLayer('x',2,1)">Rotate X2+</button>
+    <button onclick="rotateLayer('y',0,1)">Rotate Y0+</button>
+    <button onclick="rotateLayer('y',1,1)">Rotate Y1+</button>
+    <button onclick="rotateLayer('y',2,1)">Rotate Y2+</button>
+    <button onclick="rotateLayer('z',0,1)">Rotate Z0+</button>
+    <button onclick="rotateLayer('z',1,1)">Rotate Z1+</button>
+    <button onclick="rotateLayer('z',2,1)">Rotate Z2+</button>
+  </div>
+<script src="script.js"></script>
 </body>
 </html>

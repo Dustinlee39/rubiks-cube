@@ -1,11 +1,10 @@
 const container = document.getElementById('cube-container');
 const CUBE_SIZE=3, CUBIE_SIZE=90, GAP=2;
 let cubeRotationX=-30, cubeRotationY=-30;
-let isDragging=false, startX, startY, animating=false;
+let isDragging=false, startX, startY;
 let rotatingLayer=false;
 let cubeState=[];
 
-// Create cubies
 function createCubie(x,y,z){
   const cubie=document.createElement('div'); cubie.classList.add('cubie');
   cubie.style.transform=`translateX(${x}px) translateY(${y}px) translateZ(${z}px)`;
@@ -16,14 +15,13 @@ function createCubie(x,y,z){
   return cubie;
 }
 
-// Generate cube
 function generateCube(){
   const offset=((CUBE_SIZE-1)*(CUBIE_SIZE+GAP))/2;
   cubeState=[];
   for(let x=0;x<CUBE_SIZE;x++){ cubeState[x]=[];
     for(let y=0;y<CUBE_SIZE;y++){ cubeState[x][y]=[];
       for(let z=0;z<CUBE_SIZE;z++){
-        const cubie=createCubie(x*(CUBIE_SIZE+GAP)-offset, y*(CUBIE_SIZE+GAP)-offset, z*(CUBIE_SIZE+GAP)-offset);
+        const cubie=createCubie(x*(CUBIE_SIZE+GAP)-offset, y*(CUBIE_SIZE+GAP)-offset, z*(CUBE_SIZE+GAP)-offset);
         container.appendChild(cubie);
         cubeState[x][y][z]=cubie;
       }
@@ -32,11 +30,10 @@ function generateCube(){
   updateCubeRotation();
 }
 
-// Apply rotation
 function updateCubeRotation(){ container.style.transform=`rotateX(${cubeRotationX}deg) rotateY(${cubeRotationY}deg)`; }
 
-// Rotate a layer
-function rotateLayer(axis,index,direction){
+// Make rotateLayer global for button access
+window.rotateLayer=function(axis,index,direction){
   if(rotatingLayer) return;
   rotatingLayer=true;
   const cubies=[];
@@ -58,7 +55,6 @@ function rotateLayer(axis,index,direction){
   },310);
 }
 
-// Update cubeState array
 function updateCubeState(axis,index,direction){
   const newState=JSON.parse(JSON.stringify(cubeState));
   for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
@@ -71,7 +67,7 @@ function updateCubeState(axis,index,direction){
 
 // Dragging
 function startDrag(e){ 
-  if(animating) return;
+  if(rotatingLayer) return;
   isDragging=true; 
   startX=e.type.includes('mouse')?e.clientX:e.touches[0].clientX; 
   startY=e.type.includes('mouse')?e.clientY:e.touches[0].clientY; 
@@ -84,13 +80,11 @@ function drag(e){
   const currentY=e.type.includes('mouse')?e.clientY:e.touches[0].clientY; 
   const deltaX=currentX-startX; 
   const deltaY=currentY-startY; 
-
   requestAnimationFrame(()=>{
     cubeRotationY+=deltaX*0.4; 
     cubeRotationX-=deltaY*0.4; 
     updateCubeRotation();
   });
-
   startX=currentX; startY=currentY;
 }
 
@@ -99,7 +93,6 @@ function endDrag(){
   container.style.cursor='grab';
 }
 
-// Event listeners
 container.addEventListener('mousedown',startDrag);
 container.addEventListener('mousemove',drag);
 container.addEventListener('mouseup',endDrag);
