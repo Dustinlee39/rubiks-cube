@@ -5,16 +5,19 @@ let isDragging=false, startX, startY;
 let rotatingLayer=false;
 let cubeState=[];
 
+// Create cubie with dynamic lighting
 function createCubie(x,y,z){
   const cubie=document.createElement('div'); cubie.classList.add('cubie');
   cubie.style.transform=`translateX(${x}px) translateY(${y}px) translateZ(${z}px)`;
   ['front','back','right','left','top','bottom'].forEach(faceName=>{
-    const face=document.createElement('div'); face.classList.add('face',faceName);
+    const face=document.createElement('div'); 
+    face.classList.add('face',faceName);
     cubie.appendChild(face);
   });
   return cubie;
 }
 
+// Generate cube
 function generateCube(){
   const offset=((CUBE_SIZE-1)*(CUBIE_SIZE+GAP))/2;
   cubeState=[];
@@ -30,9 +33,32 @@ function generateCube(){
   updateCubeRotation();
 }
 
-function updateCubeRotation(){ container.style.transform=`rotateX(${cubeRotationX}deg) rotateY(${cubeRotationY}deg)`; }
+// Apply rotation to whole cube
+function updateCubeRotation(){ 
+  container.style.transform=`rotateX(${cubeRotationX}deg) rotateY(${cubeRotationY}deg)`; 
+  applyLighting();
+}
 
-// Make rotateLayer global for button access
+// Dynamic lighting
+function applyLighting(){
+  const lightX=Math.sin(cubeRotationY*Math.PI/180);
+  const lightY=Math.sin(cubeRotationX*Math.PI/180);
+  cubeState.flat(2).forEach(cubie=>{
+    cubie.querySelectorAll('.face').forEach(face=>{
+      // Simple brightness adjustment based on face orientation
+      let brightness=1;
+      if(face.classList.contains('front')) brightness=0.8+0.2*lightY;
+      if(face.classList.contains('back')) brightness=0.8-0.2*lightY;
+      if(face.classList.contains('right')) brightness=0.8+0.2*lightX;
+      if(face.classList.contains('left')) brightness=0.8-0.2*lightX;
+      if(face.classList.contains('top')) brightness=0.9+0.1*lightY;
+      if(face.classList.contains('bottom')) brightness=0.9-0.1*lightY;
+      face.style.filter=`brightness(${brightness})`;
+    });
+  });
+}
+
+// Rotate a layer (global for buttons)
 window.rotateLayer=function(axis,index,direction){
   if(rotatingLayer) return;
   rotatingLayer=true;
@@ -52,9 +78,11 @@ window.rotateLayer=function(axis,index,direction){
   setTimeout(()=>{
     updateCubeState(axis,index,direction);
     rotatingLayer=false;
+    applyLighting();
   },310);
 }
 
+// Update cubeState array
 function updateCubeState(axis,index,direction){
   const newState=JSON.parse(JSON.stringify(cubeState));
   for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
@@ -66,6 +94,7 @@ function updateCubeState(axis,index,direction){
 }
 
 // Dragging
+let dragX=0, dragY=0;
 function startDrag(e){ 
   if(rotatingLayer) return;
   isDragging=true; 
@@ -93,6 +122,7 @@ function endDrag(){
   container.style.cursor='grab';
 }
 
+// Event listeners
 container.addEventListener('mousedown',startDrag);
 container.addEventListener('mousemove',drag);
 container.addEventListener('mouseup',endDrag);
