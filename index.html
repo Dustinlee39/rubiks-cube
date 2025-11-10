@@ -1,70 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3x3 Rubik's Cube</title>
-<style>
-body{margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#111;color:white;font-family:sans-serif;}
-#cube-container{perspective:800px;margin-bottom:10px;}
-#cube{width:300px;height:300px;position:relative;transform-style:preserve-3d;transition:transform 0.2s;}
-.face{position:absolute;width:100%;height:100%;border:1px solid #333;}
-.front{transform:rotateY(0deg) translateZ(150px);background:red;}
-.back{transform:rotateY(180deg) translateZ(150px);background:orange;}
-.right{transform:rotateY(90deg) translateZ(150px);background:green;}
-.left{transform:rotateY(-90deg) translateZ(150px);background:blue;}
-.top{transform:rotateX(90deg) translateZ(150px);background:white;}
-.bottom{transform:rotateX(-90deg) translateZ(150px);background:yellow;}
-button{margin:2px;padding:5px 10px;}
-#controls{margin-top:10px;display:flex;flex-wrap:wrap;justify-content:center;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Rubik's Cube</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="cube-container"><div id="cube">
-<div class="face front"></div>
-<div class="face back"></div>
-<div class="face right"></div>
-<div class="face left"></div>
-<div class="face top"></div>
-<div class="face bottom"></div>
-</div></div>
-<div id="controls">
-<button onclick="scramble()">Scramble</button>
-<button onclick="resetCube()">Reset</button>
-<button onclick="undoMove()">Undo</button>
-<button onclick="redoMove()">Redo</button>
-<span id="timer">0s</span>
-</div>
-<script>
-let cube=document.getElementById('cube'),drag=false,startX,startY,rotX=-30,rotY=30;
-let moveHistory=[],redoHistory=[],timer=0,interval=null;
-function updateCube(){cube.style.transform=`rotateX(${rotX}deg) rotateY(${rotY}deg)`;}
-cube.addEventListener('mousedown',e=>{drag=true;startX=e.clientX;startY=e.clientY;});
-cube.addEventListener('mousemove',e=>{if(drag){rotX-=(e.clientY-startY)*0.5;rotY+=(e.clientX-startX)*0.5;updateCube();startX=e.clientX;startY=e.clientY;}});
-cube.addEventListener('mouseup',()=>drag=false);
-cube.addEventListener('mouseleave',()=>drag=false);
-cube.addEventListener('touchstart',e=>{drag=true;startX=e.touches[0].clientX;startY=e.touches[0].clientY;});
-cube.addEventListener('touchmove',e=>{if(drag){rotX-=(e.touches[0].clientY-startY)*0.5;rotY+=(e.touches[0].clientX-startX)*0.5;updateCube();startX=e.touches[0].clientX;startY=e.touches[0].clientY;}});
-cube.addEventListener('touchend',()=>drag=false);
-document.addEventListener('keydown',e=>{
-switch(e.key.toLowerCase()){
-case 'w':rotX-=15;break;
-case 's':rotX+=15;break;
-case 'a':rotY-=15;break;
-case 'd':rotY+=15;break;
-case 'r':resetCube();break;
-case 'z':undoMove();break;
-case 'y':redoMove();break;
-}
-updateCube();
-});
-function scramble(){for(let i=0;i<20;i++){rotX+=Math.random()*90-45;rotY+=Math.random()*90-45;moveHistory.push([rotX,rotY]);}updateCube();}
-function resetCube(){rotX=-30;rotY=30;moveHistory=[];redoHistory=[];updateCube();}
-function undoMove(){if(moveHistory.length){redoHistory.push([rotX,rotY]);[rotX,rotY]=moveHistory.pop();updateCube();}}
-function redoMove(){if(redoHistory.length){moveHistory.push([rotX,rotY]);[rotX,rotY]=redoHistory.pop();updateCube();}}
-function startTimer(){interval=setInterval(()=>{timer++;document.getElementById('timer').innerText=timer+'s';},1000);}
-startTimer();
-updateCube();
-</script>
+  <div id="cube-container"></div>
+  <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,12 @@
+* { margin:0; padding:0; box-sizing:border-box; }
+body { display:flex; justify-content:center; align-items:center; height:100vh; background-color:#111; perspective:1000px; touch-action:none; }
+#cube-container { width:300px; height:300px; position:relative; transform-style:preserve-3d; cursor:grab; }
+.cubie { position:absolute; width:90px; height:90px; transform-style:preserve-3d; transition:transform 0.3s ease-in-out; }
+.face { position:absolute; width:90px; height:90px; border:2px solid #000; backface-visibility:hidden; }
+.face.front { background:white;  transform: rotateY(0deg) translateZ(45px); }
+.face.back  { background:yellow; transform: rotateY(180deg) translateZ(45px); }
+.face.right { background:red;    transform: rotateY(90deg) translateZ(45px); }
+.face.left  { background:orange; transform: rotateY(-90deg) translateZ(45px); }
+.face.top   { background:blue;   transform: rotateX(90deg) translateZ(45px); }
+.face.bottom{ background:green;  transform: rotateX(-90deg) translateZ(45px); }
+.rotating { transition: transform 0.3s ease-in-out; }
