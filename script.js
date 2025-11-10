@@ -1,7 +1,7 @@
 const container = document.getElementById('cube-container');
 const CUBE_SIZE=3, CUBIE_SIZE=90, GAP=2;
 let cubeRotationX=-30, cubeRotationY=-30, isDragging=false, startX, startY;
-let rotatingLayer=false, layerAxis=null, layerIndex=null, dragDirection=null;
+let rotatingLayer=false, layerAxis=null, layerIndex=null;
 let cubeState=[];
 
 function createCubie(x,y,z){
@@ -55,7 +55,7 @@ function updateCubeState(axis,index,direction){
   cubeState=newState;
 }
 
-// Dragging logic
+// Dragging logic with layer detection placeholder
 function startDrag(e){ 
   isDragging=true; 
   startX=e.type.includes('mouse')?e.clientX:e.touches[0].clientX; 
@@ -71,7 +71,7 @@ function drag(e){
   const deltaY=currentY-startY; 
 
   if(!rotatingLayer){ 
-    // Determine if user is dragging a layer or cube (placeholder: currently whole cube rotates)
+    // Placeholder: detect face and set layerAxis/layerIndex if implementing full interactive layer rotation
     cubeRotationY+=deltaX*0.5; 
     cubeRotationX-=deltaY*0.5; 
     updateCubeRotation(); 
@@ -86,7 +86,6 @@ function endDrag(){
   rotatingLayer=false; 
   layerAxis=null; 
   layerIndex=null; 
-  dragDirection=null; 
   container.style.cursor='grab'; 
 }
 
