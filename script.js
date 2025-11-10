@@ -148,3 +148,40 @@ window.rotateLayer = function(axis,index,direction){
   // Remove highlight after animation
   setTimeout(()=>cubies.forEach(c=>c.classList.remove('highlight')), 400);
 };
+// Layer swipe detection for mobile
+let touchStartX, touchStartY, touchCubie;
+container.addEventListener('touchstart', e=>{
+  if(rotatingLayer) return;
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  // Determine touched cubie using elementFromPoint
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  touchCubie = el.closest('.cubie');
+});
+
+container.addEventListener('touchend', e=>{
+  if(rotatingLayer || !touchCubie) return;
+  const touch = e.changedTouches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+  const absX = Math.abs(dx), absY = Math.abs(dy);
+  if(absX < 20 && absY < 20) return; // ignore tiny movements
+
+  // Determine dominant swipe direction
+  let axis, index, direction;
+  // Map swipe to layer rotation
+  if(absX > absY){
+    // Horizontal swipe -> rotate Y layer
+    axis = 'y';
+    index = Math.round((touchCubie.style.transform.match(/translateY\(([-\d.]+)px\)/)[1] - (-90))/92); 
+    direction = dx>0 ? 1 : -1;
+  } else {
+    // Vertical swipe -> rotate X layer
+    axis = 'x';
+    index = Math.round((touchCubie.style.transform.match(/translateX\(([-\d.]+)px\)/)[1] - (-90))/92);
+    direction = dy>0 ? 1 : -1;
+  }
+  rotateLayer(axis,index,direction);
+  touchCubie = null;
+});
