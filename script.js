@@ -1,9 +1,11 @@
 const container = document.getElementById('cube-container');
 const CUBE_SIZE=3, CUBIE_SIZE=90, GAP=2;
-let cubeRotationX=-30, cubeRotationY=-30, isDragging=false, startX, startY;
-let rotatingLayer=false, layerAxis=null, layerIndex=null;
+let cubeRotationX=-30, cubeRotationY=-30;
+let isDragging=false, startX, startY;
+let rotatingLayer=false;
 let cubeState=[];
 
+// Create each cubie with faces
 function createCubie(x,y,z){
   const cubie=document.createElement('div'); cubie.classList.add('cubie');
   cubie.style.transform=`translateX(${x}px) translateY(${y}px) translateZ(${z}px)`;
@@ -14,6 +16,7 @@ function createCubie(x,y,z){
   return cubie;
 }
 
+// Generate cube
 function generateCube(){
   const offset=((CUBE_SIZE-1)*(CUBIE_SIZE+GAP))/2;
   cubeState=[];
@@ -21,30 +24,36 @@ function generateCube(){
     for(let y=0;y<CUBE_SIZE;y++){ cubeState[x][y]=[];
       for(let z=0;z<CUBE_SIZE;z++){
         const cubie=createCubie(x*(CUBIE_SIZE+GAP)-offset, y*(CUBIE_SIZE+GAP)-offset, z*(CUBIE_SIZE+GAP)-offset);
-        container.appendChild(cubie); cubeState[x][y][z]=cubie;
+        container.appendChild(cubie);
+        cubeState[x][y][z]=cubie;
       }
     }
   }
   updateCubeRotation();
 }
 
+// Apply rotation to whole cube
 function updateCubeRotation(){ container.style.transform=`rotateX(${cubeRotationX}deg) rotateY(${cubeRotationY}deg)`; }
 
+// Rotate a specific layer
 function rotateLayer(axis,index,direction){
   const cubies=[];
   for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
     if((axis==='x'&&x===index)||(axis==='y'&&y===index)||(axis==='z'&&z===index)) cubies.push(cubeState[x][y][z]);
   }}}
   cubies.forEach(cubie=>{
-    const current=cubie.style.transform; let rotateStr='';
+    const current=cubie.style.transform; 
+    let rotateStr='';
     if(axis==='x') rotateStr=` rotateX(${direction*90}deg)`;
     if(axis==='y') rotateStr=` rotateY(${direction*90}deg)`;
     if(axis==='z') rotateStr=` rotateZ(${direction*90}deg)`;
-    cubie.style.transition='transform 0.5s ease-in-out'; cubie.style.transform=current+rotateStr;
+    cubie.style.transition='transform 0.5s ease-in-out'; 
+    cubie.style.transform=current+rotateStr;
   });
   setTimeout(()=>updateCubeState(axis,index,direction),510);
 }
 
+// Update cubeState array after rotation
 function updateCubeState(axis,index,direction){
   const newState=JSON.parse(JSON.stringify(cubeState));
   for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
@@ -55,12 +64,12 @@ function updateCubeState(axis,index,direction){
   cubeState=newState;
 }
 
-// Dragging logic with layer detection placeholder
+// Mouse/touch drag
 function startDrag(e){ 
   isDragging=true; 
   startX=e.type.includes('mouse')?e.clientX:e.touches[0].clientX; 
   startY=e.type.includes('mouse')?e.clientY:e.touches[0].clientY; 
-  container.style.cursor='grabbing'; 
+  container.style.cursor='grabbing';
 }
 
 function drag(e){ 
@@ -70,25 +79,27 @@ function drag(e){
   const deltaX=currentX-startX; 
   const deltaY=currentY-startY; 
 
-  if(!rotatingLayer){ 
-    // Placeholder: detect face and set layerAxis/layerIndex if implementing full interactive layer rotation
-    cubeRotationY+=deltaX*0.5; 
-    cubeRotationX-=deltaY*0.5; 
-    updateCubeRotation(); 
+  if(!rotatingLayer){
+    // Detect dominant drag direction
+    if(Math.abs(deltaX)>Math.abs(deltaY)){
+      // Example: rotate middle layer around Y axis
+      rotateLayer('y',1, deltaX>0?1:-1);
+    } else {
+      rotateLayer('x',1, deltaY>0?1:-1);
+    }
+    rotatingLayer=true;
   }
 
-  startX=currentX; 
-  startY=currentY; 
+  startX=currentX; startY=currentY;
 }
 
 function endDrag(){ 
   isDragging=false; 
   rotatingLayer=false; 
-  layerAxis=null; 
-  layerIndex=null; 
-  container.style.cursor='grab'; 
+  container.style.cursor='grab';
 }
 
+// Event listeners
 container.addEventListener('mousedown',startDrag);
 container.addEventListener('mousemove',drag);
 container.addEventListener('mouseup',endDrag);
