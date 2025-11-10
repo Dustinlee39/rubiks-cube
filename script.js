@@ -1,6 +1,7 @@
 const container = document.getElementById('cube-container');
 const CUBE_SIZE=3, CUBIE_SIZE=90, GAP=2;
-let cubeRotationX=-30, cubeRotationY=-30, isDragging=false, startX, startY, rotatingLayer=false;
+let cubeRotationX=-30, cubeRotationY=-30, isDragging=false, startX, startY;
+let rotatingLayer=false, layerAxis=null, layerIndex=null, dragDirection=null;
 let cubeState=[];
 
 function createCubie(x,y,z){
@@ -54,19 +55,40 @@ function updateCubeState(axis,index,direction){
   cubeState=newState;
 }
 
-// Dragging for cube rotation and layer rotation
-function startDrag(e){ isDragging=true; startX=e.type.includes('mouse')?e.clientX:e.touches[0].clientX; startY=e.type.includes('mouse')?e.clientY:e.touches[0].clientY; container.style.cursor='grabbing'; }
+// Dragging logic
+function startDrag(e){ 
+  isDragging=true; 
+  startX=e.type.includes('mouse')?e.clientX:e.touches[0].clientX; 
+  startY=e.type.includes('mouse')?e.clientY:e.touches[0].clientY; 
+  container.style.cursor='grabbing'; 
+}
+
 function drag(e){ 
   if(!isDragging) return; 
   const currentX=e.type.includes('mouse')?e.clientX:e.touches[0].clientX; 
   const currentY=e.type.includes('mouse')?e.clientY:e.touches[0].clientY; 
-  const deltaX=currentX-startX; const deltaY=currentY-startY; 
+  const deltaX=currentX-startX; 
+  const deltaY=currentY-startY; 
 
-  if(!rotatingLayer){ cubeRotationY+=deltaX*0.5; cubeRotationX-=deltaY*0.5; updateCubeRotation(); }
+  if(!rotatingLayer){ 
+    // Determine if user is dragging a layer or cube (placeholder: currently whole cube rotates)
+    cubeRotationY+=deltaX*0.5; 
+    cubeRotationX-=deltaY*0.5; 
+    updateCubeRotation(); 
+  }
 
-  startX=currentX; startY=currentY; 
+  startX=currentX; 
+  startY=currentY; 
 }
-function endDrag(){ isDragging=false; rotatingLayer=false; container.style.cursor='grab'; }
+
+function endDrag(){ 
+  isDragging=false; 
+  rotatingLayer=false; 
+  layerAxis=null; 
+  layerIndex=null; 
+  dragDirection=null; 
+  container.style.cursor='grab'; 
+}
 
 container.addEventListener('mousedown',startDrag);
 container.addEventListener('mousemove',drag);
