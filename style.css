@@ -1,12 +1,50 @@
 * { margin:0; padding:0; box-sizing:border-box; }
-body { display:flex; justify-content:center; align-items:center; height:100vh; background-color:#111; perspective:1000px; touch-action:none; }
-#cube-container { width:300px; height:300px; position:relative; transform-style:preserve-3d; cursor:grab; }
-.cubie { position:absolute; width:90px; height:90px; transform-style:preserve-3d; transition:transform 0.3s ease-in-out; }
-.face { position:absolute; width:90px; height:90px; border:2px solid #000; backface-visibility:hidden; }
-.face.front { background:white;  transform: rotateY(0deg) translateZ(45px); }
-.face.back  { background:yellow; transform: rotateY(180deg) translateZ(45px); }
-.face.right { background:red;    transform: rotateY(90deg) translateZ(45px); }
-.face.left  { background:orange; transform: rotateY(-90deg) translateZ(45px); }
-.face.top   { background:blue;   transform: rotateX(90deg) translateZ(45px); }
-.face.bottom{ background:green;  transform: rotateX(-90deg) translateZ(45px); }
+body { 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  height:100vh; 
+  background-color:#111; 
+  perspective:1200px; 
+  touch-action:none; 
+  font-family: sans-serif;
+}
+#cube-container { 
+  width:300px; 
+  height:300px; 
+  position:relative; 
+  transform-style:preserve-3d; 
+  cursor:grab; 
+}
+.cubie { 
+  position:absolute; 
+  width:90px; 
+  height:90px; 
+  transform-style:preserve-3d; 
+  transition:transform 0.3s ease-in-out; 
+}
+.face { 
+  position:absolute; 
+  width:90px; 
+  height:90px; 
+  border:2px solid #000; 
+  backface-visibility:hidden; 
+  box-shadow: inset -3px -3px 10px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2);
+}
+.face.front { background:linear-gradient(to bottom right, #fff,#ddd); transform: rotateY(0deg) translateZ(45px); }
+.face.back  { background:linear-gradient(to bottom right, #ff0,#ee0); transform: rotateY(180deg) translateZ(45px); }
+.face.right { background:linear-gradient(to bottom right, #f00,#c00); transform: rotateY(90deg) translateZ(45px); }
+.face.left  { background:linear-gradient(to bottom right, #ffa500,#cc8400); transform: rotateY(-90deg) translateZ(45px); }
+.face.top   { background:linear-gradient(to bottom right, #00f,#008); transform: rotateX(90deg) translateZ(45px); }
+.face.bottom{ background:linear-gradient(to bottom right, #0f0,#080); transform: rotateX(-90deg) translateZ(45px); }
 .rotating { transition: transform 0.3s ease-in-out; }
+#controls {
+  position:absolute;
+  bottom:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  justify-content:center;
+}
+button { padding:5px 10px; border:none; border-radius:5px; background:#333; color:#fff; cursor:pointer; transition:0.2s; }
+button:hover { background:#555; }
