@@ -250,3 +250,54 @@ container.addEventListener('touchmove', e=>{
 container.addEventListener('touchend', e=>{
   swipeArrow.style.opacity='0';
 });
+// FULL SYSTEM DEBUGGING
+console.log("Rubik's Cube Debugging Enabled");
+
+function debugCubie(cubie){
+  const t = cubie.style.transform;
+  console.log("Cubie:", cubie, "Transform:", t);
+}
+
+// Override rotateLayer to add debug
+const originalRotateLayerDebug = window.rotateLayer;
+window.rotateLayer = function(axis,index,direction){
+  console.log("rotateLayer called:", axis, index, direction);
+  const cubies=[];
+  for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
+    if((axis==='x'&&x===index)||(axis==='y'&&y===index)||(axis==='z'&&z===index)) cubies.push(cubeState[x][y][z]);
+  }}}
+  console.log("Affected cubies:", cubies);
+  cubies.forEach(c=>debugCubie(c));
+  originalRotateLayerDebug(axis,index,direction);
+};
+
+// Override presetRotate to debug
+const originalPresetRotate = window.presetRotate;
+window.presetRotate = function(axis,degrees){
+  console.log("presetRotate called:", axis, degrees);
+  originalPresetRotate(axis,degrees);
+  console.log("CubeRotationX:", cubeRotationX, "CubeRotationY:", cubeRotationY);
+};
+
+// Override drag functions to debug
+const originalDrag = drag;
+window.drag = function(e){
+  originalDrag(e);
+  console.log("Dragging - CubeRotationX:", cubeRotationX, "CubeRotationY:", cubeRotationY);
+};
+
+// Touch gestures debug already included
+
+// Debug function to print full cube state
+window.debugCubeState=function(){
+  console.log("Full Cube State:");
+  cubeState.forEach((plane,x)=>{
+    plane.forEach((row,y)=>{
+      row.forEach((cubie,z)=>{
+        console.log(`Cubie [${x},${y},${z}]:`, cubie.style.transform);
+      });
+    });
+  });
+};
+
+console.log("Full system debug hooks installed");
