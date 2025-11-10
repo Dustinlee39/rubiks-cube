@@ -45,7 +45,6 @@ function applyLighting(){
   const lightY=Math.sin(cubeRotationX*Math.PI/180);
   cubeState.flat(2).forEach(cubie=>{
     cubie.querySelectorAll('.face').forEach(face=>{
-      // Simple brightness adjustment based on face orientation
       let brightness=1;
       if(face.classList.contains('front')) brightness=0.8+0.2*lightY;
       if(face.classList.contains('back')) brightness=0.8-0.2*lightY;
@@ -66,20 +65,21 @@ window.rotateLayer=function(axis,index,direction){
   for(let x=0;x<CUBE_SIZE;x++){for(let y=0;y<CUBE_SIZE;y++){for(let z=0;z<CUBE_SIZE;z++){
     if((axis==='x'&&x===index)||(axis==='y'&&y===index)||(axis==='z'&&z===index)) cubies.push(cubeState[x][y][z]);
   }}}
-  cubies.forEach(cubie=>{
+  cubies.forEach((cubie,i)=>{
     const current=cubie.style.transform; 
     let rotateStr='';
     if(axis==='x') rotateStr=` rotateX(${direction*90}deg)`;
     if(axis==='y') rotateStr=` rotateY(${direction*90}deg)`;
     if(axis==='z') rotateStr=` rotateZ(${direction*90}deg)`;
-    cubie.style.transition='transform 0.3s ease-out'; 
+    // Stagger animations slightly
+    cubie.style.transition=`transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) ${i*0.02}s`; 
     cubie.style.transform=current+rotateStr;
   });
   setTimeout(()=>{
     updateCubeState(axis,index,direction);
     rotatingLayer=false;
     applyLighting();
-  },310);
+  },400);
 }
 
 // Update cubeState array
@@ -94,7 +94,6 @@ function updateCubeState(axis,index,direction){
 }
 
 // Dragging
-let dragX=0, dragY=0;
 function startDrag(e){ 
   if(rotatingLayer) return;
   isDragging=true; 
