@@ -223,3 +223,30 @@ container.addEventListener('touchend', e=>{
   rotateLayer(axis,index,Math.round(direction));
   touchCubie = null;
 });
+// Create arrow element
+const swipeArrow = document.createElement('div');
+swipeArrow.classList.add('swipe-arrow');
+swipeArrow.style.opacity='0';
+document.body.appendChild(swipeArrow);
+
+container.addEventListener('touchmove', e=>{
+  if(!touchCubie || rotatingLayer) return;
+  const touch = e.touches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+  if(Math.abs(dx)<10 && Math.abs(dy)<10) return;
+
+  // Position arrow at cubie
+  const rect = touchCubie.getBoundingClientRect();
+  swipeArrow.style.left = rect.left + rect.width/2 - 15 + 'px';
+  swipeArrow.style.top = rect.top + rect.height/2 - 15 + 'px';
+  swipeArrow.style.opacity='1';
+
+  // Rotate arrow based on swipe direction
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  swipeArrow.style.transform = `rotate(${angle}deg)`;
+});
+
+container.addEventListener('touchend', e=>{
+  swipeArrow.style.opacity='0';
+});
